@@ -53,4 +53,22 @@ class TimelineTests(unittest.TestCase):
         for c in candidates:
             self.assertTrue(0<=c['start']<c['end']<=120)
 
+    def test_safe_template_keeps_long_title_in_two_line_top_band(self):
+        from PIL import Image, ImageDraw
+        edit = core.validate_edit(self.edit | {'theme': 'safe'}, 12)
+        self.assertEqual(edit['theme'], 'safe')
+        draw = ImageDraw.Draw(Image.new('RGB', (1080, 1920)))
+        font = Path('C:/Windows/Fonts/malgunbd.ttf')
+        for title in ['블로그 하나로 번 돈이 벌써 2억이 넘습니다', '긴제목' * 14,
+                      'W' * 56, '첫째 줄에 들어갈 제목입니다\n둘째 줄도 모두 보여야 합니다']:
+            with self.subTest(title=title):
+                _, lines, _, boxes = core.title_layout(title, draw, font)
+                self.assertLessEqual(len(lines), 2)
+                self.assertEqual(''.join(''.join(lines).split()), ''.join(title.split()))
+                for left, top, right, bottom in boxes:
+                    self.assertGreaterEqual(left, 90)
+                    self.assertLessEqual(right, 990)
+                    self.assertGreaterEqual(top, 90)
+                    self.assertLessEqual(bottom, 360)
+
 if __name__ == '__main__': unittest.main()

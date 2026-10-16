@@ -13,7 +13,8 @@ import uuid
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / 'data'
 VIDEO_EXTENSIONS = {'.mp4', '.mov', '.mkv', '.webm', '.m4v', '.avi'}
-THEMES = {'dark': ('#000000', '#FFE082', '#ffffff'),
+THEMES = {'safe': ('#000000', '#ffffff', '#ffffff'),
+          'dark': ('#000000', '#FFE082', '#ffffff'),
           'paper': ('#f7f7f2', '#2347a0', '#18253e'),
           'navy': ('#132238', '#8be3d6', '#ffffff')}
 
@@ -77,7 +78,7 @@ def import_file(path, title=None):
     project = {'id': project_id, 'name': title or path.stem, 'source': source.name,
                'meta': meta, 'segments': [], 'candidates': [], 'exports': [],
                'edit': {'start': 0, 'end': min(meta['duration'], 40), 'speed': 1.0,
-                        'layout': 'fit', 'theme': 'dark', 'title': '', 'footer': '', 'captions': True}}
+                        'layout': 'fit', 'theme': 'safe', 'title': '', 'footer': '', 'captions': True}}
     save_project(project)
     return project
 
@@ -230,6 +231,41 @@ def transcribe(project, model_name, progress):
     return validate_segments(result, project['meta']['duration'])
 
 
+def title_layout(text, draw, font_path):
+    """Fit a safe-theme title inside the top 1080×1920 frame band."""
+    from PIL import ImageFont
+    for size in range(76, 23, -2):
+        font = ImageFont.truetype(str(font_path), size)
+        lines = []
+        for paragraph in text.split('\n'):
+            line = ''
+            for word in paragraph.split():
+                candidate = f'{line} {word}' if line else word
+                if draw.textlength(candidate, font=font) <= 880:
+                    line = candidate
+                    continue
+                if line:
+                    lines.append(line)
+                    line = ''
+                for char in word:
+                    if line and draw.textlength(line + char, font=font) > 880:
+                        lines.append(line)
+                        line = char
+                    else:
+                        line += char
+            lines.append(line)
+        if len(lines) > 2:
+            continue
+        height = size * len(lines) + 16 * (len(lines) - 1)
+        y = round(225 - height / 2)
+        boxes = [draw.textbbox((540, y + i * (size + 16)), line, font=font,
+                               anchor='mt', stroke_width=2) for i, line in enumerate(lines)]
+        if all(left >= 90 and right <= 990 and top >= 90 and bottom <= 360
+               for left, top, right, bottom in boxes):
+            return font, lines, y, boxes
+    raise ValueError('제목이 상단 안전영역에 들어가지 않습니다. 제목을 줄여주세요.')
+
+
 def make_overlay(edit, path):
     from PIL import Image, ImageDraw, ImageFont
     font_path = Path('C:/Windows/Fonts/malgunbd.ttf')
@@ -258,7 +294,14 @@ def make_overlay(edit, path):
                       stroke_width=0 if edit.get('theme') == 'paper' else 2,
                       stroke_fill=(0, 0, 0, 255))
     palette = THEMES[edit.get('theme', 'dark')]
-    draw_block(edit['title'], 180, 72, palette[1])
+    if edit.get('theme') == 'safe' and edit['title'].strip():
+        title_font, title_lines, title_y, _ = title_layout(edit['title'], draw, font_path)
+        for i, line in enumerate(title_lines):
+            draw.text((540, title_y + i * (title_font.size + 16)), line,
+                      font=title_font, anchor='mt', fill=palette[1],
+                      stroke_width=2, stroke_fill=(0, 0, 0, 255))
+    else:
+        draw_block(edit['title'], 180, 72, palette[1])
     draw_block(edit['footer'], 1580, 46, palette[2])
     canvas.save(path)
 

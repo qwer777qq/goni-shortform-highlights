@@ -76,6 +76,18 @@ def main():
         assert 'attachment' in headers['Content-Disposition']
         denied(f'/media/{pid}/../../server.py',{},code=403)
         assert before==hashlib.sha256((ROOT/'demo.mp4').read_bytes()).hexdigest()
+        # Render the safe template, then inspect the actual title overlay bounds.
+        from PIL import Image
+        p=api('/api/projects/'+pid)
+        p['edit'].update(title='블로그 하나로 번 돈이 벌써 2억이 넘습니다',theme='safe')
+        api('/api/save',{'id':pid,'edit':p['edit'],'segments':p['segments']})
+        safe_export=wait(api('/api/render',{'id':pid}))['export']
+        safe_folder=RESULTS/'projects'/pid/'exports'/safe_export['id']
+        with Image.open(safe_folder/'overlay.png') as overlay:
+            title_box=overlay.crop((0,0,1080,400)).getchannel('A').getbbox()
+        assert title_box and title_box[0]>=90 and title_box[1]>=90 and title_box[2]<=990 and title_box[3]<=360,title_box
+        with Image.open(safe_folder/'thumbnail.jpg') as thumbnail:
+            assert thumbnail.size==(1080,1920),thumbnail.size
         # No-audio source, slow playback, crop, no captions, different template.
         silent=RESULTS/'silent.mp4'
         core.run(['ffmpeg','-y','-v','error','-i',str(ROOT/'demo.mp4'),'-t','2','-an','-c:v','copy',str(silent)])
@@ -85,6 +97,7 @@ def main():
         r2=wait(api('/api/render',{'id':p2['id']}))
         assert not r2['export']['has_audio'] and abs(r2['export']['duration']-2)<.2
         report={'status':'passed','checks':['HTTP upload/import/save/reopen/SRT/recommend/render/download',
+                   'safe template long title inside top band / 1080x1920 first-frame thumbnail',
                    'audio and silent render','speed 1.2 and 0.5 / fit and crop / paper and navy',
                    '1080x1920 H264 AAC / full decode / expected duration / clipped SRT',
                    'Range 206/416 / cross-origin and missing-header 403 / traversal 403 / source preserved'],

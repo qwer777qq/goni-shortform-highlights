@@ -12,9 +12,11 @@ prepare는 새 프로젝트와 SRT 또는 로컬 Whisper 자막을 만든다. �
 
 선정 파일:
 ```json
-{"project_id":"prepare가 반환한 ID","brief":"초보자 기능 소개","clips":[{"start":12.4,"end":53.2,"speed":1.2,"title":"실제 시연에서 확인한 기능","footer":"채널명","theme":"dark","layout":"fit","captions":true,"reason":"문제와 해결 시연이 한 구간에서 완결됨"}]}
+{"project_id":"prepare가 반환한 ID","brief":"초보자 기능 소개","clips":[{"start":12.4,"end":53.2,"speed":1.2,"title":"실제 시연에서 확인한 기능","footer":"채널명","theme":"safe","layout":"fit","captions":true,"reason":"문제와 해결 시연이 한 구간에서 완결됨"}]}
 ```
 
 export는 전체 구간 검증 후 차례로 저장/출력한다. 이전 렌더를 유지하고 마지막 구간을 편집 상태로 남긴다. 중간 실패 시 완료된 결과를 export-result.json에 기록하고 오류로 종료한다. 사용자가 편집 중인 프로젝트 대신 새 prepare 프로젝트를 사용한다. 결과 썸네일은 초안/검수용으로 별도 브랜드 썸네일 제작을 대체하지 않는다.
+
+제목이 길거나 두 줄이면 `safe`(다크 · 제목 안전형)를 선택한다. 새 프로젝트의 기본값만 `safe`이며 기존 프로젝트의 템플릿은 유지된다. 출력된 MP4 첫 프레임과 썸네일에서 제목이 상단 검은 영역에 들어오는지 확인한다. 길어 보이면 제목을 줄여 다시 출력한다.
 
 쓰기 API는 JSON + X-Studio-Request: 1. import/youtube/transcribe/render는 jobs/{id}의 done을 확인해야 한다. 자막은 원본 시간 기준이며 구간 교집합 후 (time-start)/speed로 출력 시각을 계산한다. 결과는 data/프로젝트/exports/버전 아래 MP4/SRT/JPG/설정으로 남는다.
