@@ -1,0 +1,4 @@
+interface:
+  display_name: "고니 | REA 리버스 엔지니어링"
+  short_description: "REA 증거로 기능을 분석하고 현재 프로젝트의 독립 구현으로 연결"
+  default_prompt: "$goni-rea로 이 사이트의 기능을 분석하고 우리 프로젝트에 구현해줘."

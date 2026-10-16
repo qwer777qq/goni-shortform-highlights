@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+local_studio/data/
+local_studio/test-results/
+local_studio/demo.mp4
+*.log
+.env
+.env.*
+!.env.example
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.har
+*.saz

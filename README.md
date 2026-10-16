@@ -1,0 +1,82 @@
+# 고니 | 숏폼 하이라이트 제작
+
+프롬프트와 영상 링크 또는 롱폼 파일로 하이라이트를 구성하는 **Codex·Claude용 워크플로 + Windows 로컬 편집기 ‘장면집’**입니다.
+
+![장면집 편집 화면](docs/editor.jpg)
+
+## 무엇을 할 수 있나요?
+
+- 에이전트: 전체 자막을 읽고 요청에 맞는 후보·타임코드·훅·선정 이유·자막·썸네일 문구를 구성합니다.
+- 편집기: 로컬 영상, Whisper 한국어 자막, SRT 편집, 규칙 기반 후보 추천, 단일 구간/배속, 제목/하단 문구, 템플릿 3종, 9:16 미리보기.
+- 출력: 1080×1920 H.264/AAC MP4, SRT, 첫 프레임 JPG, 편집 설정. 이전 출력 버전과 원본을 보존합니다.
+- 도우미: 자막 준비와 **에이전트가 선정한** 여러 후보를 순서대로 출력합니다.
+
+앱 자체에 영상만 넣으면 AI가 여러 쇼츠를 자동 선정·완성하는 기능은 아직 없습니다. 맥락 판단은 Codex·Claude가 수행하며, 앱의 추천은 규칙 기반입니다. 별도 브랜드 썸네일은 에이전트가 이미지 도구로 제작·검수해야 합니다. EasyCut의 서버 AI 또는 코드를 복제한 제품이 아닙니다.
+
+## 바로 시작
+
+Windows, Python 3.11 이상, FFmpeg/ffprobe가 필요합니다. 한글 출력은 Windows 맑은 고딕을 사용합니다. FFmpeg 실행 파일을 PATH에 등록하세요.
+
+```powershell
+git clone https://github.com/qwer777qq/goni-shortform-highlights.git
+cd goni-shortform-highlights
+python -m venv .venv
+.\.venv\Scripts\python -m pip install -r local_studio/requirements.txt
+.\.venv\Scripts\python local_studio/make_demo.py
+.\.venv\Scripts\python local_studio/server.py
+```
+
+브라우저에서 http://127.0.0.1:8767 을 여세요. 이 주소는 실행한 PC에서만 접속하는 주소이며 GitHub가 편집 서버를 호스팅하지 않습니다. 데모는 테스트 패턴과 신호음입니다.
+
+자동 자막을 처음 쓸 때 모델을 한 번 내려받으세요. 이후 음성 인식은 로컬 캐시를 사용합니다.
+
+```powershell
+.\.venv\Scripts\python -c "from faster_whisper import WhisperModel; WhisperModel('small', device='cpu', compute_type='int8')"
+```
+
+YouTube 가져오기는 온라인 선택 기능이며 원격 제한에 따라 실패할 수 있습니다. 그때는 사용 가능한 로컬 영상 또는 타임코드 자막으로 진행하세요.
+
+## Codex·Claude에 요청하기
+
+[복사용 마스터 프롬프트](prompts/master-prompt.ko.md)를 붙여 넣고 영상 링크나 파일을 제공하세요. 실제 영상·파일·셸 도구 접근이 없는 환경에서는 구성까지만 가능하며, 이 저장소가 그 권한을 자동 연결하지는 않습니다.
+
+```text
+이 저장소의 고니 숏폼 하이라이트 스킬을 적용해줘.
+영상: [링크 또는 첨부한 롱폼]
+목적: 초보자에게 핵심 기능과 실제 시연 전달
+길이/개수: 35~60초, 서로 다른 관점으로 3개
+요청: 전체 맥락과 실제 타임코드로 선정하고,
+훅·자막·썸네일을 구성한 뒤 가능한 환경에서 MP4까지 출력·검수해줘.
+```
+
+Codex 설치: `skills/goni-shortform-highlights`와 `skills/goni-rea` 폴더를 사용자 스킬 폴더에 복사하거나, 해당 SKILL.md를 직접 읽도록 요청하세요. Claude에서는 `CLAUDE.md`와 원하는 스킬 문서를 읽도록 요청하세요. 설치 위치·자동 검색은 사용하는 클라이언트의 지원 방식에 따릅니다.
+
+## 구성
+
+| 경로 | 용도 |
+|---|---|
+| `local_studio/` | 로컬 웹 편집기와 미디어 파이프라인 |
+| `skills/goni-shortform-highlights/` | 맥락 기반 구성·썸네일·검수 워크플로와 실행 도우미 |
+| `skills/goni-rea/` | REA 증거 분석→독립 구현 워크플로 |
+| `prompts/master-prompt.ko.md` | Codex·Claude 공통 입력 프롬프트 |
+| `docs/verification.md` | 검증 범위와 한계 |
+
+## 제한
+
+현재 Windows용입니다. 단일 연속 구간만 편집하며, 비연속 장면 연결·자동 얼굴 추적·댓글 이미지·플랫폼 자동 게시는 없습니다. 긴 영상은 변환/음성 인식에 시간이 걸리고 작업 취소·재시작 복구는 아직 지원하지 않습니다. 음성 인식 오류와 자막·컷 경계는 사람이 검수해야 합니다. 조회수나 성과를 보장하지 않습니다.
+
+영상·자막·모델·사용자 프로젝트·키·토큰은 이 저장소에 포함하지 않습니다. 자신의 영상 데이터는 `local_studio/data/`에 저장됩니다.
+
+## 검증
+
+```powershell
+python -m unittest discover -s local_studio/tests -v
+python local_studio/smoke_test.py
+node --check local_studio/static/app.js
+```
+
+첫 두 명령은 Python/FFmpeg/Pillow가, 마지막 명령은 Node.js가 필요합니다. 검증 세부와 미검증 항목은 [검증 기록](docs/verification.md)을 확인하세요.
+
+## 출처와 라이선스
+
+고니 응용 코드·스킬은 [MIT](LICENSE)로 공유합니다. REA 엔진은 **[morluto/rea](https://github.com/morluto/rea)** 프로젝트(MIT)이며 이 저장소에 포함하지 않습니다. REA 설치/연결은 별도입니다. 종속 라이브러리와 원본 영상의 권리는 각 권리자에게 있습니다. [출처 안내](THIRD_PARTY_NOTICES.md).

@@ -1,0 +1,4 @@
+interface:
+  display_name: "고니 | 숏폼 하이라이트"
+  short_description: "프롬프트와 롱폼 영상으로 맥락을 살린 하이라이트 선정과 로컬 출력"
+  default_prompt: "$goni-shortform-highlights로 이 롱폼에서 프롬프트에 맞는 하이라이트를 구성하고 영상으로 만들어줘."
