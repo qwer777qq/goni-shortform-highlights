@@ -1,25 +1,28 @@
-# 장면집 · 로컬 쇼츠 스튜디오
+# 고니 숏폼 하이라이트 · 장면집
 
-REA로 조사한 EasyCut의 사용자 흐름을 참고해 독립 구현한 Windows 로컬 앱입니다.
+고니 숏폼 하이라이트의 Windows 로컬 편집기입니다. 공개된 편집 흐름을 조사한 뒤 고니용으로 독립 구현했습니다.
 
-시작 화면과 편집 흐름은 공개 EasyCut 화면을 참고해 독립 구현했습니다. [공개 관찰 범위와 템플릿 갤러리](../docs/templates/README.md)에 출처와 구현 한계를 기록했습니다. 타사 CSS 번들과 브랜드 자산은 포함하지 않습니다.
+[템플릿 갤러리](../docs/templates/README.md)에서 선택 가능한 디자인과 검증 범위를 볼 수 있습니다. 외부 서비스의 서버 기능·코드·브랜드 자산은 포함하지 않습니다. 조사 도구와 참고 자료의 출처는 [기술 출처 고지](../THIRD_PARTY_NOTICES.md)에 따로 기록했습니다.
 
 ## 실행
 
-이 PC에서는 `start.cmd`를 더블클릭하고 http://127.0.0.1:8767 을 여세요. 서버 창을 닫으면 종료됩니다. 포트가 사용 중이면 이미 실행 중인지 먼저 확인하세요.
+이 PC에서는 `local_studio/start.cmd`를 더블클릭하고 http://127.0.0.1:8767 을 여세요. 서버 창을 닫으면 종료됩니다. 포트가 사용 중이면 이미 실행 중인지 먼저 확인하세요.
 
-다른 PC 준비: Python 3.11 이상, FFmpeg/ffprobe를 PATH에 설치하고 아래 명령을 실행합니다.
+다른 PC에서는 Python 3.11 이상을 설치하고 FFmpeg/ffprobe를 PATH에 등록하세요. 공개 저장소를 내려받은 **루트 폴더**에서 PowerShell을 열어 다음 명령을 순서대로 실행합니다.
 
 ```powershell
-python -m pip install -r requirements.txt
-python make_demo.py
-python server.py
+python -m venv .venv
+.\.venv\Scripts\python -m pip install -r local_studio/requirements.txt
+.\.venv\Scripts\python local_studio/make_demo.py
+.\.venv\Scripts\python local_studio/server.py
 ```
+
+브라우저에서 http://127.0.0.1:8767 을 열면 시작 화면이 나옵니다. `make_demo.py`가 만든 합성 영상으로 둘러보려면 **테스트 영상으로 둘러보기**를 누르세요. 자신의 영상만 사용할 경우 데모 생성 명령은 생략할 수 있습니다.
 
 자동 자막은 캐시된 faster-whisper 모델을 CPU에서 사용합니다. 모델이 없으면 오류 안내 후 SRT를 사용할 수 있습니다. 모델을 처음 받을 때만 인터넷 연결이 필요합니다.
 
 ```powershell
-python -c "from faster_whisper import WhisperModel; WhisperModel('small', device='cpu', compute_type='int8')"
+.\.venv\Scripts\python -c "from faster_whisper import WhisperModel; WhisperModel('small', device='cpu', compute_type='int8')"
 ```
 
 ## 사용 순서
@@ -36,9 +39,9 @@ python -c "from faster_whisper import WhisperModel; WhisperModel('small', device
 - `data/<프로젝트>/project.json`: 편집 상태. 원본 복사와 미리보기도 같은 폴더에 저장.
 - `data/<프로젝트>/exports/<버전>/`: 영상, 자막, 썸네일, 설정. 실패한 렌더의 중간 파일도 남을 수 있습니다.
 - 서버는 127.0.0.1에서만 열립니다. 미디어·자막은 외부 API로 보내지 않습니다. YouTube 가져오기를 선택했을 때만 해당 서비스에 접속합니다.
-- 출력은 1080×1920 H.264/AAC, 단일 연속 구간입니다. 다중 클립 연결, 얼굴 추적, 실제 댓글 수집·이미지 첨부, 자동 게시, EasyCut 서버 AI와 같은 결과는 지원하지 않습니다.
+- 출력은 1080×1920 H.264/AAC, 단일 연속 구간입니다. 다중 클립 연결, 얼굴 추적, 실제 댓글 수집·이미지 첨부, 자동 게시, 서버 AI를 통한 쇼츠 자동 선정은 지원하지 않습니다.
 - 미리보기는 브라우저 글꼴 렌더링이므로 최종 자막 줄바꿈/글꼴과 차이가 있습니다. 오른쪽 출력 영상으로 최종 확인하세요.
-- 제목 안전 배치의 관찰 근거와 로컬 검증은 [템플릿 문서](../docs/templates/README.md)에 있습니다. 이지컷의 모든 서버 데이터나 템플릿 코드를 복제한 것은 아닙니다.
+- 제목 안전 배치의 관찰 근거와 로컬 검증은 [템플릿 문서](../docs/templates/README.md)에 있습니다. 외부 서비스의 서버 데이터나 템플릿 코드는 포함하지 않습니다.
 - 긴 영상 복사·미리보기·음성 인식은 시간이 걸립니다. 현재 작업 취소와 서버 재시작 후 작업 재개는 지원하지 않습니다. 저장된 프로젝트와 완료 출력은 유지됩니다.
 - YouTube 다운로드는 선택 기능이며 원격 제한/로그인 요구에 따라 실패할 수 있습니다. 해당 경우 로컬 파일을 사용하세요.
 - 데모는 테스트 패턴·작은 신호음과 예제 SRT입니다. 음성 인식 성능을 보여주는 영상은 아닙니다.
