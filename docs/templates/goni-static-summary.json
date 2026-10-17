@@ -1,0 +1,47 @@
+{
+  "display_name": "고니 기능 분석",
+  "engine_attribution": "morluto/rea, MIT, CLI 6.5.0",
+  "evidence_id": "ev_71079074b9e60749c885431f59256665612aafe7a51ef924a1e484321db6e454",
+  "statistics": {
+    "relevant_files": 14,
+    "nested_asar_containers": 0,
+    "text_bytes_read": 571344,
+    "invalid_utf8_files": 0,
+    "parsed_javascript_files": 1,
+    "visited_ast_nodes": 129338,
+    "findings": 155,
+    "modules": 22,
+    "parse_failures": 0
+  },
+  "source_selection": {
+    "requested_paths": [
+      "7178-cbeaa366ba496a69.js"
+    ],
+    "unselected_files": 13
+  },
+  "coverage": {
+    "status": "partial",
+    "truncated": true,
+    "limits": [
+      {
+        "name": "semantic_graph_file_node_ceiling",
+        "value": 2000,
+        "unit": "items"
+      },
+      {
+        "name": "semantic_graph_node_ceiling",
+        "value": 2000,
+        "unit": "items"
+      }
+    ]
+  },
+  "limitations": [
+    "Caller-selected source analysis leaves 13 inventoried files outside analysis scope. Inventory identity covers the complete artifact; relationships through unselected sources remain unknown.",
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+  ]
+}

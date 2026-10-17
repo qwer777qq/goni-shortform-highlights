@@ -1,0 +1,50 @@
+{
+  "display_name": "고니 기능 분석",
+  "date": "2026-10-17",
+  "generated_shorts": 4,
+  "selected_source_range_seconds": [
+    0,
+    240
+  ],
+  "rerendered_clip_duration_seconds": 50,
+  "output_filename": "goni-test-v2.mp4",
+  "sha256": "438c4ddfe64cca303f16cd4c95d25a15bb348ddf1120d847ad7a42408d22ae40",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "r_frame_rate": "30/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "50.000000",
+      "size": "21601297"
+    }
+  },
+  "decode_exit_code": 0,
+  "decode_stderr": "",
+  "sample_frame": {
+    "second": 5,
+    "title_changed_and_not_clipped": true
+  },
+  "download": {
+    "regular_link_tool": "timeout",
+    "video_media": "success",
+    "zip": "not_tested"
+  },
+  "local_implemented_templates": 11,
+  "generation_template_selections_tested": 7,
+  "observed_template_concepts_union": 9,
+  "new_beta_templates_implemented": false,
+  "full_service_replication": false
+}

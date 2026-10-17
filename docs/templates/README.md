@@ -2,6 +2,8 @@
 
 2026-10-17 EasyCut [공개 템플릿 목록](https://www.easycut.co.kr/templates)에서 확인한 7종을 참고하여 로컬 편집기용으로 독립 구현했습니다. 기존 4종을 보존해 선택 항목은 총 11종입니다.
 
+로그인 후 생성·편집·재렌더링·개별 미디어 다운로드까지 추가 확인한 내용은 [고니 기능 분석](goni-feature-analysis.md)과 [실제 출력 검증](goni-runtime-verification.json)에 정리했습니다. 생성 화면의 SNS·커뮤니티 beta는 관찰 항목이며 로컬 구현 수에 추가하지 않습니다. 유료 기능과 서버 AI는 미확인 범위를 별도로 표시합니다.
+
 ![7종 출력 미리보기](previews/all-templates.jpg)
 
 | 종류 | ID | 구현 | 미리보기 |
