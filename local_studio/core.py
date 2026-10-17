@@ -13,10 +13,8 @@ import uuid
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / 'data'
 VIDEO_EXTENSIONS = {'.mp4', '.mov', '.mkv', '.webm', '.m4v', '.avi'}
-THEMES = {'safe': ('#000000', '#ffffff', '#ffffff'),
-          'dark': ('#000000', '#FFE082', '#ffffff'),
-          'paper': ('#f7f7f2', '#2347a0', '#18253e'),
-          'navy': ('#132238', '#8be3d6', '#ffffff')}
+from template_styles import CATALOG, PRESETS, timed_text, decorate
+THEMES = {item['id']: tuple(item['palette']) for item in CATALOG}
 
 
 def run(args, cwd=None, timeout=7200):
@@ -108,7 +106,10 @@ def validate_edit(edit, duration):
         raise ValueError('상단 문구는 56자, 하단 문구는 42자까지입니다.')
     if title.count('\n') > 1 or footer.count('\n') > 1:
         raise ValueError('제목과 하단 문구는 직접 줄바꿈을 한 번까지 넣을 수 있습니다.')
-    return {'start': start, 'end': min(end, duration), 'speed': speed,
+    comment = str(edit.get('comment', ''))
+    if len(comment) > 80:
+        raise ValueError('댓글 문구는 80자까지입니다.')
+    return {'comment': comment, 'start': start, 'end': min(end, duration), 'speed': speed,
             'layout': edit['layout'], 'theme': edit.get('theme', 'dark'), 'title': title, 'footer': footer,
             'captions': bool(edit.get('captions', True))}
 
@@ -232,7 +233,7 @@ def transcribe(project, model_name, progress):
 
 
 def title_layout(text, draw, font_path):
-    """Fit a safe-theme title inside the top 1080×1920 frame band."""
+    """Fit the complete title into two lines inside the top 9:16 safe band."""
     from PIL import ImageFont
     for size in range(76, 23, -2):
         font = ImageFont.truetype(str(font_path), size)
@@ -291,22 +292,31 @@ def make_overlay(edit, path):
             return draw_block(text, y, size - 6, fill)
         for i, line in enumerate(lines):
             draw.text((540, y + i * (size + 18)), line, font=font, anchor='mt', fill=fill,
-                      stroke_width=0 if edit.get('theme') == 'paper' else 2,
+                      stroke_width=0 if edit.get('theme') in ('paper', 'white-yellow', 'paper-story') else 2,
                       stroke_fill=(0, 0, 0, 255))
+    decorate(draw, edit, font_path)
     palette = THEMES[edit.get('theme', 'dark')]
-    if edit.get('theme') == 'safe' and edit['title'].strip():
+    if edit['title'].strip():
         title_font, title_lines, title_y, _ = title_layout(edit['title'], draw, font_path)
         for i, line in enumerate(title_lines):
             draw.text((540, title_y + i * (title_font.size + 16)), line,
                       font=title_font, anchor='mt', fill=palette[1],
-                      stroke_width=2, stroke_fill=(0, 0, 0, 255))
+                      stroke_width=0 if edit.get('theme') in ('paper', 'white-yellow', 'paper-story') else 2,
+                      stroke_fill=(0, 0, 0, 255))
+    if edit.get('theme') == 'comment-capture':
+        footer = edit['footer'].replace('\n', ' ')
+        size = 32
+        footer_font = ImageFont.truetype(str(font_path), size)
+        while draw.textlength(footer, font=footer_font) > 900 and size > 16:
+            size -= 1
+            footer_font = ImageFont.truetype(str(font_path), size)
+        draw.text((540, 1830), footer, font=footer_font, fill=palette[2], anchor='mt')
     else:
-        draw_block(edit['title'], 180, 72, palette[1])
-    draw_block(edit['footer'], 1580, 46, palette[2])
+        draw_block(edit['footer'], 1580, 46, palette[2])
     canvas.save(path)
 
 
-def make_ass(segments):
+def make_ass(segments, theme='safe'):
     header = '''[Script Info]
 ScriptType: v4.00+
 PlayResX: 1080
@@ -319,14 +329,15 @@ Style: Default,Malgun Gothic,64,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 '''
     rows = []
-    for s in segments:
-        # Neutralize ASS control sequences, preserving literal caption text.
-        text = s['text'].replace('\\', '＼').replace('{', '｛').replace('}', '｝')
-        lines = []
-        for line in text.splitlines():
-            lines.extend(textwrap.wrap(line, width=16, break_long_words=True) or [''])
-        text = r'\N'.join(lines)
-        rows.append(f'Dialogue: 0,{timestamp(s["start"], True)},{timestamp(s["end"], True)},Default,,0,0,0,,{text}')
+    style = PRESETS[theme]['caption_style']
+    for segment in segments:
+        for start, end, text in timed_text(segment, style):
+            if style == 'standard':
+                lines = []
+                for line in text.splitlines():
+                    lines.extend(textwrap.wrap(line, width=16, break_long_words=True) or [''])
+                text = r'\N'.join(lines)
+            rows.append(f'Dialogue: 0,{timestamp(start, True)},{timestamp(end, True)},Default,,0,0,0,,{text}')
     return header + '\n'.join(rows)
 
 
@@ -339,7 +350,7 @@ def render(project, progress):
     output.mkdir(parents=True)
     segments = clip_segments(project['segments'], edit)
     (output / 'captions.srt').write_text(to_srt(segments), encoding='utf-8-sig')
-    (output / 'captions.ass').write_text(make_ass(segments), encoding='utf-8-sig')
+    (output / 'captions.ass').write_text(make_ass(segments, edit['theme']), encoding='utf-8-sig')
     (output / 'edit.json').write_text(json.dumps({'edit': edit, 'segments': project['segments']},
                                                ensure_ascii=False, indent=2), encoding='utf-8')
     make_overlay(edit, output / 'overlay.png')

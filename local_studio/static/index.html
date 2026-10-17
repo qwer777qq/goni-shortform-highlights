@@ -1,9 +1,38 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>장면집 · 로컬 쇼츠 스튜디오</title><link rel="stylesheet" href="/style.css"></head>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>장면집 · 로컬 쇼츠 스튜디오</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/theme.css"></head>
 <body>
+<div class="app-shell">
+<aside class="sidebar" aria-label="작업 메뉴">
+  <a class="sidebar-brand" href="/" aria-label="장면집 홈"><span class="brand-mark" aria-hidden="true">✦</span><span>장면<span class="brand-accent">집</span><small>SHORTS STUDIO</small></span></a>
+  <div class="sidebar-badge"><span class="live-dot"></span> 이 PC에서만 작업</div>
+  <nav>
+    <h2>쇼츠 제작</h2>
+    <a href="#landing" class="nav-link active"><span aria-hidden="true">⌂</span> 시작 화면</a>
+    <a href="#landingProjects" class="nav-link"><span aria-hidden="true">▦</span> 내 프로젝트</a>
+    <button id="sideImport" class="nav-link nav-button"><span aria-hidden="true">＋</span> 영상 불러오기</button>
+    <h2>편집 도구</h2>
+    <a href="#candidates" class="nav-link"><span aria-hidden="true">✧</span> 추천 구간</a>
+    <a href="#captions" class="nav-link"><span aria-hidden="true">≡</span> 자막 수정</a>
+    <a href="#editControls" class="nav-link"><span aria-hidden="true">◈</span> 영상 꾸미기</a>
+  </nav>
+  <div class="sidebar-footer"><span class="live-dot"></span> 로컬 스튜디오 <small>원본은 내 컴퓨터에 보관</small></div>
+</aside>
+<div class="app-content">
 <header><a class="brand" href="/">장면집<span>로컬 쇼츠 스튜디오</span></a><div class="header-actions"><button id="openImport">영상 불러오기</button><select id="projects" aria-label="저장한 프로젝트"><option value="">저장한 프로젝트</option></select><button id="save" disabled>저장</button><button id="render" class="primary" disabled>MP4 내보내기</button></div></header>
 <div id="status" role="status" aria-live="polite">영상 한 편에서, 남길 장면을 골라보세요.</div>
-<main>
+<section id="landing" class="landing" aria-label="쇼츠 제작 시작">
+  <div class="hero">
+    <div class="hero-kicker"><span class="live-dot"></span> 내 영상으로 만드는 하이라이트</div>
+    <h1>긴 영상에서<br><span>남길 장면을 찾으세요.</span></h1>
+    <p>영상 링크나 파일을 넣고, 추천 구간을 골라 자막을 다듬으세요.<br>9:16 쇼츠와 썸네일을 내 컴퓨터에 저장합니다.</p>
+    <div class="source-tabs" role="group" aria-label="영상 입력 방식"><button id="heroLinkTab" class="source-tab selected" type="button" aria-pressed="true">↗ 영상 링크</button><button id="heroFileTab" class="source-tab" type="button" aria-pressed="false">⇧ 파일 업로드</button></div>
+    <div class="hero-input"><span aria-hidden="true">↗</span><input id="heroUrl" type="url" aria-label="YouTube 영상 URL" placeholder="YouTube 영상 URL을 붙여 넣으세요"><button id="heroImport" class="primary">쇼츠 만들기</button></div>
+    <p class="hero-steps">영상 불러오기 <span>→</span> 구간·자막 편집 <span>→</span> MP4 내보내기</p>
+  </div>
+  <section id="landingProjects" class="landing-projects"><div class="landing-section-title"><div><h2>내 프로젝트</h2><p>이 PC에 저장된 편집 작업</p></div><button id="projectRefresh" type="button">새로고침 ↗</button></div><div id="projectCards" class="project-cards"><p class="empty">저장된 프로젝트를 확인하고 있습니다.</p></div></section>
+  <section class="landing-process" aria-label="제작 순서"><h2>한 화면에서 완성하는 쇼츠</h2><div class="process-grid"><div><strong>01</strong><h3>원본 불러오기</h3><p>파일이나 공개 YouTube 링크로 작업을 시작합니다.</p></div><div><strong>02</strong><h3>장면과 자막 편집</h3><p>추천 구간을 고르고 제목·자막을 직접 고칩니다.</p></div><div><strong>03</strong><h3>출력하고 확인하기</h3><p>MP4, SRT, 썸네일을 버전별로 저장합니다.</p></div></div></section>
+</section>
+<main id="workbench" hidden>
 <aside class="left-panel"><div class="panel-heading"><h2>장면과 자막</h2><span id="sourceInfo">원본 대기</span></div>
 <div class="tools"><label>음성 인식 모델<select id="model"><option value="small">Small · 균형</option><option value="base">Base · 빠르게</option><option value="tiny">Tiny · 가장 빠르게</option><option value="medium">Medium · 정밀하게</option></select></label><button id="transcribe" data-project disabled>자동 자막 만들기</button><label class="file-button">SRT 불러오기<input id="srtFile" type="file" accept=".srt" disabled></label></div>
 <details open><summary>추천 구간</summary><p class="hint">자막의 키워드와 문장 경계로 후보를 찾습니다.</p><div class="inline"><label>목표 길이<input id="target" type="number" value="40" min="5" max="90"><span>초</span></label><button id="recommend" data-project disabled>구간 찾기</button></div><div id="candidates"><p class="empty">자막을 만든 뒤 후보를 찾아보세요.</p></div></details>
@@ -15,8 +44,9 @@
 <label class="scrub-label" for="scrub">재생 위치</label><input id="scrub" aria-label="재생 위치" type="range" min="0" max="1" step="0.01" value="0" disabled>
 <div class="timeline"><div><label>시작 (초)<input id="start" type="number" step="0.01" min="0" disabled></label><button id="setStart" data-project disabled>현재 위치로</button></div><span class="range-line">—</span><div><label>끝 (초)<input id="end" type="number" step="0.01" min="0" disabled></label><button id="setEnd" data-project disabled>현재 위치로</button></div><div class="duration"><small>출력 길이</small><strong id="duration">—</strong></div></div>
 <p class="preview-note">편집 미리보기입니다. 최종 자막 줄바꿈과 글꼴은 출력된 영상에서 확인하세요.</p></section>
-<aside class="right-panel"><h2>영상 꾸미기</h2><fieldset id="editControls" disabled><label>상단 제목<textarea id="title" maxlength="56" rows="3" placeholder="핵심을 담은 짧은 제목"></textarea><small class="hint">‘다크 · 제목 안전형’은 제목을 상단에서 최대 두 줄로 맞춥니다. 출력된 첫 화면도 확인하세요.</small></label><label>채널명 / 하단 문구<textarea id="footer" maxlength="42" rows="2" placeholder="채널명이나 짧은 안내"></textarea></label><label>템플릿<select id="theme"><option value="safe">다크 · 제목 안전형</option><option value="dark">검정 · 노랑</option><option value="paper">화이트 · 블루</option><option value="navy">네이비 · 민트</option></select></label><label>영상 배치<select id="layout"><option value="fit">원본 전체 맞춤</option><option value="crop">가운데 채움</option></select></label><label>재생 속도<select id="speed"><option value="0.5">0.5배</option><option value="0.75">0.75배</option><option value="1">1배</option><option value="1.2">1.2배</option><option value="1.5">1.5배</option><option value="2">2배</option></select></label><label class="check"><input id="captionToggle" type="checkbox" checked>영상에 자막 표시</label></fieldset>
+<aside class="right-panel"><h2>영상 꾸미기</h2><fieldset id="editControls" disabled><label>상단 제목<textarea id="title" maxlength="56" rows="3" placeholder="핵심을 담은 짧은 제목"></textarea><small class="hint">제목은 상단 안전영역 안에서 최대 두 줄로 자동 맞춤합니다.</small></label><label>채널명 / 하단 문구<textarea id="footer" maxlength="42" rows="2" placeholder="채널명이나 짧은 안내"></textarea></label><label>템플릿<select id="theme"><option value="safe">다크 · 제목 안전형</option><option value="dark">검정 · 노랑</option><option value="paper">화이트 · 블루</option><option value="navy">네이비 · 민트</option></select></label><label id="commentControl" hidden>댓글 카드 문구<textarea id="comment" maxlength="80" rows="3" placeholder="직접 작성할 질문이나 반응"></textarea><small class="hint">실제 시청자 댓글 수집이 아닌 작성 문구로 표시합니다.</small></label><p id="templateHint" class="hint"></p><label>영상 배치<select id="layout"><option value="fit">원본 전체 맞춤</option><option value="crop">가운데 채움</option></select></label><label>재생 속도<select id="speed"><option value="0.5">0.5배</option><option value="0.75">0.75배</option><option value="1">1배</option><option value="1.2">1.2배</option><option value="1.5">1.5배</option><option value="2">2배</option></select></label><label class="check"><input id="captionToggle" type="checkbox" checked>영상에 자막 표시</label></fieldset>
 <section class="exports"><h2>내보낸 영상</h2><div id="exports"><p class="empty">편집을 마치면 MP4 내보내기를 누르세요. 출력할 때마다 새 버전으로 보관합니다.</p></div></section></aside>
 </main>
+</div></div>
 <dialog id="importDialog"><form method="dialog"><button class="close" aria-label="닫기">×</button></form><h2>영상을 작업실로</h2><p>원본을 복사해 편집합니다. 원본 파일은 유지됩니다.</p><label class="drop">영상 파일 선택<input id="videoFile" type="file" accept="video/*,.mkv"><small>MP4, MOV, MKV, WebM · 최대 10GB</small></label><label>이 PC의 영상 경로<input id="localPath" placeholder="C:\Videos\lecture.mp4"></label><button id="importPath">경로에서 불러오기</button><details><summary>YouTube 공개 영상 가져오기</summary><p class="hint">온라인 연결이 필요하며 사이트의 다운로드 제한에 따라 실패할 수 있습니다.</p><label>영상 주소<input id="youtubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=…"></label><button id="importYoutube">주소에서 가져오기</button></details></dialog>
 <script src="/app.js"></script></body></html>

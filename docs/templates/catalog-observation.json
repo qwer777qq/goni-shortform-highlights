@@ -1,0 +1,15 @@
+{
+  "observed_on": "2026-10-17",
+  "source_url": "https://www.easycut.co.kr/templates",
+  "scope": "public catalog only; detail settings require sign-in",
+  "public_types": [
+    "자막 팝형",
+    "자막 강조형",
+    "댓글 캡처",
+    "다크 레드",
+    "화이트 옐로",
+    "다크 미니멀",
+    "페이퍼"
+  ],
+  "implementation": "independent local equivalents, no proprietary source or media"
+}

@@ -1,0 +1,134 @@
+[
+  {
+    "id": "safe",
+    "name": "제목 안전형",
+    "palette": [
+      "#000000",
+      "#ffffff",
+      "#ffffff"
+    ],
+    "caption_style": "standard",
+    "legacy": true,
+    "accent": "#80F5CB"
+  },
+  {
+    "id": "dark",
+    "name": "검정 · 노랑",
+    "palette": [
+      "#000000",
+      "#FFE082",
+      "#ffffff"
+    ],
+    "caption_style": "standard",
+    "legacy": true,
+    "accent": "#80F5CB"
+  },
+  {
+    "id": "paper",
+    "name": "화이트 · 블루",
+    "palette": [
+      "#f7f7f2",
+      "#2347a0",
+      "#18253e"
+    ],
+    "caption_style": "standard",
+    "legacy": true,
+    "accent": "#80F5CB"
+  },
+  {
+    "id": "navy",
+    "name": "네이비 · 민트",
+    "palette": [
+      "#132238",
+      "#8be3d6",
+      "#ffffff"
+    ],
+    "caption_style": "standard",
+    "legacy": true,
+    "accent": "#80F5CB"
+  },
+  {
+    "id": "subtitle-pop",
+    "name": "자막 팝형",
+    "palette": [
+      "#07090D",
+      "#FFFFFF",
+      "#FFFFFF"
+    ],
+    "caption_style": "pop",
+    "legacy": false,
+    "accent": "#80F5CB"
+  },
+  {
+    "id": "subtitle-highlight",
+    "name": "자막 강조형",
+    "palette": [
+      "#07090D",
+      "#FFFFFF",
+      "#FFFFFF"
+    ],
+    "caption_style": "highlight",
+    "legacy": false,
+    "accent": "#80F5CB"
+  },
+  {
+    "id": "comment-capture",
+    "name": "댓글 카드형",
+    "palette": [
+      "#111318",
+      "#FFFFFF",
+      "#FFFFFF"
+    ],
+    "caption_style": "standard",
+    "legacy": false,
+    "accent": "#80F5CB"
+  },
+  {
+    "id": "dark-red",
+    "name": "다크 레드",
+    "palette": [
+      "#08090C",
+      "#FF555B",
+      "#FFFFFF"
+    ],
+    "caption_style": "standard",
+    "legacy": false,
+    "accent": "#FF555B"
+  },
+  {
+    "id": "white-yellow",
+    "name": "화이트 옐로",
+    "palette": [
+      "#FFFEFA",
+      "#202020",
+      "#202020"
+    ],
+    "caption_style": "standard",
+    "legacy": false,
+    "accent": "#FFE56B"
+  },
+  {
+    "id": "dark-minimal",
+    "name": "다크 미니멀",
+    "palette": [
+      "#000000",
+      "#FFFFFF",
+      "#B9C0CA"
+    ],
+    "caption_style": "standard",
+    "legacy": false,
+    "accent": "#80F5CB"
+  },
+  {
+    "id": "paper-story",
+    "name": "페이퍼",
+    "palette": [
+      "#F2EBDD",
+      "#44382B",
+      "#655442"
+    ],
+    "caption_style": "standard",
+    "legacy": false,
+    "accent": "#B8A286"
+  }
+]

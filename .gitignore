@@ -9,6 +9,7 @@ local_studio/demo.mp4
 .env.*
 !.env.example
 *.mp4
+!docs/templates/previews/*.mp4
 *.mov
 *.wav
 *.mp3

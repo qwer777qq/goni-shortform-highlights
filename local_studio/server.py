@@ -133,7 +133,7 @@ class Handler(BaseHTTPRequestHandler):
             path = unquote(parsed.path)
             if path == '/api/config':
                 self.json({'ffmpeg': bool(shutil.which('ffmpeg')), 'ffprobe': bool(shutil.which('ffprobe')),
-                           'data_dir': str(core.DATA), 'demo_available': (core.ROOT / 'demo.mp4').exists()})
+                           'templates': core.CATALOG, 'data_dir': str(core.DATA), 'demo_available': (core.ROOT / 'demo.mp4').exists()})
             elif path == '/api/projects':
                 projects = []
                 for item in sorted(core.DATA.glob('*/project.json'), key=lambda p: p.stat().st_mtime, reverse=True):
@@ -158,7 +158,7 @@ class Handler(BaseHTTPRequestHandler):
                     raise PermissionError('허용되지 않는 파일입니다.')
                 self.file(target, 'download' in parse_qs(parsed.query))
             else:
-                assets = {'/': 'index.html', '/app.js': 'app.js', '/style.css': 'style.css'}
+                assets = {'/': 'index.html', '/app.js': 'app.js', '/style.css': 'style.css', '/theme.css': 'theme.css'}
                 if path not in assets:
                     raise FileNotFoundError()
                 self.file(STATIC / assets[path])

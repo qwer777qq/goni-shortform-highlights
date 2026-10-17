@@ -1,0 +1,397 @@
+{
+  "source": "local_studio/static/index.html",
+  "visible_text": [
+    "장면집 · 로컬 쇼츠 스튜디오",
+    "✦",
+    "장면",
+    "집",
+    "SHORTS STUDIO",
+    "이 PC에서만 작업",
+    "쇼츠 제작",
+    "⌂",
+    "시작 화면",
+    "▦",
+    "내 프로젝트",
+    "＋",
+    "영상 불러오기",
+    "편집 도구",
+    "✧",
+    "추천 구간",
+    "≡",
+    "자막 수정",
+    "◈",
+    "영상 꾸미기",
+    "로컬 스튜디오",
+    "원본은 내 컴퓨터에 보관",
+    "장면집",
+    "로컬 쇼츠 스튜디오",
+    "저장한 프로젝트",
+    "저장",
+    "MP4 내보내기",
+    "영상 한 편에서, 남길 장면을 골라보세요.",
+    "내 영상으로 만드는 하이라이트",
+    "긴 영상에서",
+    "남길 장면을 찾으세요.",
+    "영상 링크나 파일을 넣고, 추천 구간을 골라 자막을 다듬으세요.",
+    "9:16 쇼츠와 썸네일을 내 컴퓨터에 저장합니다.",
+    "↗ 영상 링크",
+    "⇧ 파일 업로드",
+    "↗",
+    "쇼츠 만들기",
+    "→",
+    "구간·자막 편집",
+    "이 PC에 저장된 편집 작업",
+    "새로고침 ↗",
+    "저장된 프로젝트를 확인하고 있습니다.",
+    "한 화면에서 완성하는 쇼츠",
+    "01",
+    "원본 불러오기",
+    "파일이나 공개 YouTube 링크로 작업을 시작합니다.",
+    "02",
+    "장면과 자막 편집",
+    "추천 구간을 고르고 제목·자막을 직접 고칩니다.",
+    "03",
+    "출력하고 확인하기",
+    "MP4, SRT, 썸네일을 버전별로 저장합니다.",
+    "장면과 자막",
+    "원본 대기",
+    "음성 인식 모델",
+    "Small · 균형",
+    "Base · 빠르게",
+    "Tiny · 가장 빠르게",
+    "Medium · 정밀하게",
+    "자동 자막 만들기",
+    "SRT 불러오기",
+    "자막의 키워드와 문장 경계로 후보를 찾습니다.",
+    "목표 길이",
+    "초",
+    "구간 찾기",
+    "자막을 만든 뒤 후보를 찾아보세요.",
+    "+ 자막",
+    "시간은 원본 영상 기준입니다. 시간을 누르면 해당 위치로 이동합니다.",
+    "음성을 인식하거나 SRT 파일을 불러오세요.",
+    "남길 장면을 찾는 작업실",
+    "모든 편집 파일은 이 PC에 저장됩니다.",
+    "↶",
+    "↷",
+    "한 장면을 꺼내세요.",
+    "구간을 고르고, 자막을 다듬고,",
+    "세로 영상으로 저장하세요.",
+    "내 영상 불러오기",
+    "테스트 영상으로 둘러보기",
+    "재생",
+    "00:00.0 / 00:00.0",
+    "음소거",
+    "9:16 · 1080 × 1920",
+    "재생 위치",
+    "시작 (초)",
+    "현재 위치로",
+    "—",
+    "끝 (초)",
+    "출력 길이",
+    "편집 미리보기입니다. 최종 자막 줄바꿈과 글꼴은 출력된 영상에서 확인하세요.",
+    "상단 제목",
+    "제목은 상단 안전영역 안에서 최대 두 줄로 자동 맞춤합니다.",
+    "채널명 / 하단 문구",
+    "템플릿",
+    "다크 · 제목 안전형",
+    "검정 · 노랑",
+    "화이트 · 블루",
+    "네이비 · 민트",
+    "댓글 카드 문구",
+    "실제 시청자 댓글 수집이 아닌 작성 문구로 표시합니다.",
+    "영상 배치",
+    "원본 전체 맞춤",
+    "가운데 채움",
+    "재생 속도",
+    "0.5배",
+    "0.75배",
+    "1배",
+    "1.2배",
+    "1.5배",
+    "2배",
+    "영상에 자막 표시",
+    "내보낸 영상",
+    "편집을 마치면 MP4 내보내기를 누르세요. 출력할 때마다 새 버전으로 보관합니다.",
+    "×",
+    "영상을 작업실로",
+    "원본을 복사해 편집합니다. 원본 파일은 유지됩니다.",
+    "영상 파일 선택",
+    "MP4, MOV, MKV, WebM · 최대 10GB",
+    "이 PC의 영상 경로",
+    "경로에서 불러오기",
+    "YouTube 공개 영상 가져오기",
+    "온라인 연결이 필요하며 사이트의 다운로드 제한에 따라 실패할 수 있습니다.",
+    "영상 주소",
+    "주소에서 가져오기"
+  ],
+  "fields": [
+    {
+      "tag": "select",
+      "id": "projects",
+      "placeholder": null,
+      "aria_label": "저장한 프로젝트",
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "heroUrl",
+      "placeholder": "YouTube 영상 URL을 붙여 넣으세요",
+      "aria_label": "YouTube 영상 URL",
+      "max_length": null
+    },
+    {
+      "tag": "select",
+      "id": "model",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "srtFile",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "target",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "mute",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "scrub",
+      "placeholder": null,
+      "aria_label": "재생 위치",
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "start",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "end",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "textarea",
+      "id": "title",
+      "placeholder": "핵심을 담은 짧은 제목",
+      "aria_label": null,
+      "max_length": "56"
+    },
+    {
+      "tag": "textarea",
+      "id": "footer",
+      "placeholder": "채널명이나 짧은 안내",
+      "aria_label": null,
+      "max_length": "42"
+    },
+    {
+      "tag": "select",
+      "id": "theme",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "textarea",
+      "id": "comment",
+      "placeholder": "직접 작성할 질문이나 반응",
+      "aria_label": null,
+      "max_length": "80"
+    },
+    {
+      "tag": "select",
+      "id": "layout",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "select",
+      "id": "speed",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "captionToggle",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "videoFile",
+      "placeholder": null,
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "localPath",
+      "placeholder": "C:\\Videos\\lecture.mp4",
+      "aria_label": null,
+      "max_length": null
+    },
+    {
+      "tag": "input",
+      "id": "youtubeUrl",
+      "placeholder": "https://www.youtube.com/watch?v=…",
+      "aria_label": null,
+      "max_length": null
+    }
+  ],
+  "templates": [
+    {
+      "id": "safe",
+      "name": "제목 안전형",
+      "palette": [
+        "#000000",
+        "#ffffff",
+        "#ffffff"
+      ],
+      "caption_style": "standard",
+      "legacy": true,
+      "accent": "#80F5CB"
+    },
+    {
+      "id": "dark",
+      "name": "검정 · 노랑",
+      "palette": [
+        "#000000",
+        "#FFE082",
+        "#ffffff"
+      ],
+      "caption_style": "standard",
+      "legacy": true,
+      "accent": "#80F5CB"
+    },
+    {
+      "id": "paper",
+      "name": "화이트 · 블루",
+      "palette": [
+        "#f7f7f2",
+        "#2347a0",
+        "#18253e"
+      ],
+      "caption_style": "standard",
+      "legacy": true,
+      "accent": "#80F5CB"
+    },
+    {
+      "id": "navy",
+      "name": "네이비 · 민트",
+      "palette": [
+        "#132238",
+        "#8be3d6",
+        "#ffffff"
+      ],
+      "caption_style": "standard",
+      "legacy": true,
+      "accent": "#80F5CB"
+    },
+    {
+      "id": "subtitle-pop",
+      "name": "자막 팝형",
+      "palette": [
+        "#07090D",
+        "#FFFFFF",
+        "#FFFFFF"
+      ],
+      "caption_style": "pop",
+      "legacy": false,
+      "accent": "#80F5CB"
+    },
+    {
+      "id": "subtitle-highlight",
+      "name": "자막 강조형",
+      "palette": [
+        "#07090D",
+        "#FFFFFF",
+        "#FFFFFF"
+      ],
+      "caption_style": "highlight",
+      "legacy": false,
+      "accent": "#80F5CB"
+    },
+    {
+      "id": "comment-capture",
+      "name": "댓글 카드형",
+      "palette": [
+        "#111318",
+        "#FFFFFF",
+        "#FFFFFF"
+      ],
+      "caption_style": "standard",
+      "legacy": false,
+      "accent": "#80F5CB"
+    },
+    {
+      "id": "dark-red",
+      "name": "다크 레드",
+      "palette": [
+        "#08090C",
+        "#FF555B",
+        "#FFFFFF"
+      ],
+      "caption_style": "standard",
+      "legacy": false,
+      "accent": "#FF555B"
+    },
+    {
+      "id": "white-yellow",
+      "name": "화이트 옐로",
+      "palette": [
+        "#FFFEFA",
+        "#202020",
+        "#202020"
+      ],
+      "caption_style": "standard",
+      "legacy": false,
+      "accent": "#FFE56B"
+    },
+    {
+      "id": "dark-minimal",
+      "name": "다크 미니멀",
+      "palette": [
+        "#000000",
+        "#FFFFFF",
+        "#B9C0CA"
+      ],
+      "caption_style": "standard",
+      "legacy": false,
+      "accent": "#80F5CB"
+    },
+    {
+      "id": "paper-story",
+      "name": "페이퍼",
+      "palette": [
+        "#F2EBDD",
+        "#44382B",
+        "#655442"
+      ],
+      "caption_style": "standard",
+      "legacy": false,
+      "accent": "#B8A286"
+    }
+  ]
+}

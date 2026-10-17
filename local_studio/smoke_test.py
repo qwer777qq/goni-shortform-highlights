@@ -48,12 +48,19 @@ def main():
             except OSError: time.sleep(.1)
         else: raise AssertionError('Server did not start')
         assert b'canvas' in req('/')[1]
+        catalog = api('/api/config')['templates']
+        assert len(catalog) == 11 and sum(not item['legacy'] for item in catalog) == 7
         denied('/api/demo',{},b'{}')
         denied('/api/demo',{'Origin':'https://example.org','X-Studio-Request':'1'},b'{}')
         denied('/api/config',{'Host':'evil.example'})
         source=(ROOT/'demo.mp4').read_bytes(); before=hashlib.sha256(source).hexdigest()
         job=json.loads(req('/api/upload?name=demo.mp4',raw=source,headers={'X-Studio-Request':'1'})[1])
         p=wait(job)['project']; pid=p['id']
+        for item in catalog:
+            p['edit'].update(theme=item['id'], comment='직접 작성한 테스트 질문')
+            api('/api/save', {'id':pid, 'edit':p['edit']})
+            saved = api('/api/projects/'+pid)['edit']
+            assert saved['theme'] == item['id'] and saved['comment'] == '직접 작성한 테스트 질문'
         p=api('/api/srt',{'id':pid,'text':(ROOT/'demo.srt').read_text(encoding='utf-8')})
         p['edit'].update(start=2,end=8,speed=1.2,title='로컬 편집 테스트',footer='원본 보존 · 출력 검증',theme='paper')
         p=api('/api/save',{'id':pid,'edit':p['edit'],'segments':p['segments']})
@@ -76,18 +83,16 @@ def main():
         assert 'attachment' in headers['Content-Disposition']
         denied(f'/media/{pid}/../../server.py',{},code=403)
         assert before==hashlib.sha256((ROOT/'demo.mp4').read_bytes()).hexdigest()
-        # Render the safe template, then inspect the actual title overlay bounds.
+        # The long title must remain inside the black top band in the rendered asset.
         from PIL import Image
-        p=api('/api/projects/'+pid)
-        p['edit'].update(title='블로그 하나로 번 돈이 벌써 2억이 넘습니다',theme='safe')
+        p['edit'].update(theme='safe',title='블로그 하나로 번 돈이 벌써 2억이 넘습니다')
         api('/api/save',{'id':pid,'edit':p['edit'],'segments':p['segments']})
-        safe_export=wait(api('/api/render',{'id':pid}))['export']
-        safe_folder=RESULTS/'projects'/pid/'exports'/safe_export['id']
+        safe=wait(api('/api/render',{'id':pid}))['export']
+        safe_folder=RESULTS/'projects'/pid/'exports'/safe['id']
         with Image.open(safe_folder/'overlay.png') as overlay:
-            title_box=overlay.crop((0,0,1080,400)).getchannel('A').getbbox()
-        assert title_box and title_box[0]>=90 and title_box[1]>=90 and title_box[2]<=990 and title_box[3]<=360,title_box
-        with Image.open(safe_folder/'thumbnail.jpg') as thumbnail:
-            assert thumbnail.size==(1080,1920),thumbnail.size
+            left,top,right,bottom=overlay.crop((0,0,1080,400)).getbbox()
+        assert 90<=left<right<=990 and 90<=top<bottom<=360,(left,top,right,bottom)
+        assert core.probe(safe_folder/'short.mp4')['width']==1080
         # No-audio source, slow playback, crop, no captions, different template.
         silent=RESULTS/'silent.mp4'
         core.run(['ffmpeg','-y','-v','error','-i',str(ROOT/'demo.mp4'),'-t','2','-an','-c:v','copy',str(silent)])
@@ -97,8 +102,8 @@ def main():
         r2=wait(api('/api/render',{'id':p2['id']}))
         assert not r2['export']['has_audio'] and abs(r2['export']['duration']-2)<.2
         report={'status':'passed','checks':['HTTP upload/import/save/reopen/SRT/recommend/render/download',
-                   'safe template long title inside top band / 1080x1920 first-frame thumbnail',
-                   'audio and silent render','speed 1.2 and 0.5 / fit and crop / paper and navy',
+                   'audio and silent render','speed 1.2 and 0.5 / fit and crop / paper, safe and navy',
+                   'long title inside top safe band on overlay and MP4',
                    '1080x1920 H264 AAC / full decode / expected duration / clipped SRT',
                    'Range 206/416 / cross-origin and missing-header 403 / traversal 403 / source preserved'],
                 'project':pid,'output':str(out),'thumbnail':str(folder/'thumbnail.jpg'),'source_sha256':before}

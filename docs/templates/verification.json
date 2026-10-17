@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-17",
+  "unit_tests": 11,
+  "template_renders": [
+    {
+      "id": "subtitle-pop",
+      "duration": 3.0,
+      "audio": true,
+      "decoded": true,
+      "sha256": "28ab4aaabab85035bf720341dbfcbfd7f41db3d5653c1e52aaba5baf17a4fcd5"
+    },
+    {
+      "id": "subtitle-highlight",
+      "duration": 3.0,
+      "audio": true,
+      "decoded": true,
+      "sha256": "3be13d5ce57becd68ef22ff7d9c357390d9ee51016df44e0c6ab64d40673162c"
+    },
+    {
+      "id": "comment-capture",
+      "duration": 3.0,
+      "audio": true,
+      "decoded": true,
+      "sha256": "f8ae044b3255f9724c3a7ec2556b4c45212573dd1a29658ac7f8b9b313091f94"
+    },
+    {
+      "id": "dark-red",
+      "duration": 3.0,
+      "audio": true,
+      "decoded": true,
+      "sha256": "d6929b607e0b2a8eb290928518e7e300d97c6f3b9abd38b5b011ec289378bde7"
+    },
+    {
+      "id": "white-yellow",
+      "duration": 3.0,
+      "audio": true,
+      "decoded": true,
+      "sha256": "ca8be00b79566d42a38db96f5d0f6ceec272541aa546f8c4dee57d5296244ed8"
+    },
+    {
+      "id": "dark-minimal",
+      "duration": 3.0,
+      "audio": true,
+      "decoded": true,
+      "sha256": "e82ba39c6de69e263a8fa1359f0bf06982c97f45576bdc153e035d8d9147380c"
+    },
+    {
+      "id": "paper-story",
+      "duration": 3.0,
+      "audio": true,
+      "decoded": true,
+      "sha256": "a19c5bfd0a96494adf02977c92513f02a14c8f9a3280b2a3210c3ce609435c74"
+    }
+  ],
+  "visual_review": "contact sheet checked: two-line titles and card bounds",
+  "browser_click_test": "not performed; browser connection unavailable",
+  "http_smoke": "passed: upload/import/save/reopen/render/download/range/origin guards",
+  "catalog_roundtrip": "11 themes and manual comment save/reopen passed",
+  "javascript_syntax": "passed"
+}
