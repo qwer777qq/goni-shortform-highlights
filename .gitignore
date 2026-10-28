@@ -1,4 +1,5 @@
 .venv/
+.venv-reel/
 __pycache__/
 *.pyc
 local_studio/data/

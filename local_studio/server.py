@@ -15,6 +15,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 import uuid
 
 import core
+import reel
 
 JOBS = {}
 LOCK = threading.RLock()
@@ -158,7 +159,8 @@ class Handler(BaseHTTPRequestHandler):
                     raise PermissionError('허용되지 않는 파일입니다.')
                 self.file(target, 'download' in parse_qs(parsed.query))
             else:
-                assets = {'/': 'index.html', '/app.js': 'app.js', '/style.css': 'style.css', '/theme.css': 'theme.css'}
+                assets = {'/': 'index.html', '/app.js': 'app.js', '/style.css': 'style.css', '/theme.css': 'theme.css',
+                          '/reel': 'reel.html', '/reel.js': 'reel.js', '/reel.css': 'reel.css'}
                 if path not in assets:
                     raise FileNotFoundError()
                 self.file(STATIC / assets[path])
@@ -209,7 +211,20 @@ class Handler(BaseHTTPRequestHandler):
                 return
             data = self.read_json()
             route = parsed.path
-            if route == '/api/import':
+            if route in ('/api/reel/preset', '/api/reel/save', '/api/reel/render'):
+                with LOCK:
+                    project_id = data['id']
+                    project = core.read_project(project_id)
+                    if busy(project_id):
+                        raise ValueError('프로젝트 작업이 끝난 뒤 다시 시도하세요.')
+                    if route.endswith('/preset'):
+                        self.json(reel.preset(project['meta']['duration']))
+                    elif route.endswith('/save'):
+                        self.json(reel.save(project_id, data['plan']))
+                    else:
+                        plan = reel.validate(project.get('reel', {}), project['meta']['duration'])
+                        self.json(start_job('reel', lambda progress: reel.render(project_id, plan, progress), project_id), 202)
+            elif route == '/api/import':
                 path = data.get('path', '')
                 self.json(start_job('import', lambda progress: {'project': core.import_file(path)}), 202)
             elif route == '/api/demo':

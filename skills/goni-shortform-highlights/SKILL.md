@@ -17,7 +17,7 @@ description: 프롬프트와 영상 링크 또는 롱폼 파일을 받아 고니
 
 ## 로컬 실행
 
-[장면집 연결](references/local-studio.md)을 읽고 현재 프로젝트의 local_studio를 사용한다. 도우미 `scripts/studio_client.py`가 자막 준비와 선정된 구간의 순차 출력을 지원한다. **후보의 의미 판단은 에이전트가 수행한다.** 앱 자체가 영상만 받아 AI로 여러 쇼츠를 자동 완성한다고 소개하지 않는다. 현재 렌더러는 단일 연속 구간만 지원한다. 비연속 조합이 필요하면 지원하는 기존 편집 파이프라인을 사용하거나 해당 기능을 개발·검증한다.
+[장면집 연결](references/local-studio.md)을 읽고 현재 프로젝트의 local_studio를 사용한다. 도우미 `scripts/studio_client.py`가 자막 준비와 선정된 구간의 순차 출력을 지원한다. **후보의 의미 판단은 에이전트가 수행한다.** 앱 자체가 영상만 받아 AI로 여러 쇼츠를 자동 완성한다고 소개하지 않는다. 기본 자막 렌더러는 단일 연속 구간이다. 여러 구간·반전·플래시·명암·장면별 배속은 새 릴스 모드와 `goni-reel-studio` 스킬을 사용한다. 릴스 모드는 자막 합성·인물 마스킹·자동 비트 싱크를 지원하지 않는다. [실행 안내](https://github.com/qwer777qq/goni-shortform-highlights/blob/main/docs/reel-studio.md)를 따른다.
 
 Codex/Claude의 파일·셸·영상 도구 지원을 실제로 확인한다. 연결되지 않은 환경에서 처리 완료로 주장하지 않는다. 기본은 로컬 자막 처리이며 외부 AI API에 영상 업로드나 API 키 설정을 자동 요구하지 않는다.
 
