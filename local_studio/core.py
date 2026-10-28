@@ -56,7 +56,7 @@ def save_project(project):
     os.replace(temp, folder / 'project.json')
 
 
-def import_file(path, title=None):
+def import_file(path, title=None, preview=True):
     path = Path(path).expanduser().resolve()
     if not path.is_file() or path.suffix.lower() not in VIDEO_EXTENSIONS:
         raise ValueError('MP4, MOV, MKV, WebM 영상 파일을 선택하세요.')
@@ -66,13 +66,14 @@ def import_file(path, title=None):
     folder.mkdir(parents=True)
     source = folder / ('source' + path.suffix.lower())
     shutil.copy2(path, source)
-    # Browser preview is always H.264/AAC, even when the source codec is unsupported.
-    run(['ffmpeg', '-y', '-v', 'error', '-i', str(source), '-map', '0:v:0', '-map', '0:a:0?',
-         '-vf', 'scale=960:960:force_original_aspect_ratio=decrease:force_divisible_by=2',
-         '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '27', '-c:a', 'aac',
-         '-movflags', '+faststart', str(folder / 'preview.mp4')])
-    run(['ffmpeg', '-y', '-v', 'error', '-i', str(source), '-frames:v', '1',
-         '-vf', 'scale=480:-2', str(folder / 'poster.jpg')])
+    if preview:
+        # Browser preview is optional for headless jobs, H.264/AAC for the editor.
+        run(['ffmpeg', '-y', '-v', 'error', '-i', str(source), '-map', '0:v:0', '-map', '0:a:0?',
+             '-vf', 'scale=960:960:force_original_aspect_ratio=decrease:force_divisible_by=2',
+             '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '27', '-c:a', 'aac',
+             '-movflags', '+faststart', str(folder / 'preview.mp4')])
+        run(['ffmpeg', '-y', '-v', 'error', '-i', str(source), '-frames:v', '1',
+             '-vf', 'scale=480:-2', str(folder / 'poster.jpg')])
     project = {'id': project_id, 'name': title or path.stem, 'source': source.name,
                'meta': meta, 'segments': [], 'candidates': [], 'exports': [],
                'edit': {'start': 0, 'end': min(meta['duration'], 40), 'speed': 1.0,

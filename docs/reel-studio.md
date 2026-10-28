@@ -2,6 +2,8 @@
 
 기본 자막 편집기는 유지하고 **릴스 다중 장면 편집**을 추가했습니다. 한 원본의 여러 구간을 연결하고 배속·중앙 확대·대비·밝기·채도·짧은 반전·플래시를 설정합니다. MCP는 FFmpeg 기반 로컬 렌더러에 연결합니다. After Effects/Blender 플러그인을 설치하거나 자동 제어하는 방식은 아닙니다.
 
+**장면집을 켜지 않고 사용:** [독립 실행 안내](standalone-reel.md). MCP 기본값은 이제 서버가 필요 없는 독립 모드입니다. 아래 서버 실행은 화면을 사용하는 경우에만 필요합니다.
+
 ## 설치와 시작
 
 Python 3.11 이상, FFmpeg와 ffprobe가 필요합니다. 영상 처리는 로컬에서 수행하며 API 키가 필요하지 않습니다.
@@ -30,13 +32,13 @@ python -m venv .venv-reel
 
 ## Codex·Claude Code MCP 연결
 
-서버 실행 창을 켜 둔 상태에서 저장소 루트의 **새 PowerShell 창**에 입력합니다.
+서버 없이 저장소 루트의 PowerShell에 입력합니다. 화면과 같은 프로젝트에 연결하려는 경우에만 마지막에 `--port 8769`를 추가합니다.
 
 ```powershell
 $reelPython = (Resolve-Path '.venv-reel/Scripts/python.exe').Path
 $reelMcp = (Resolve-Path 'local_studio/reel_mcp.py').Path
-codex mcp add goni-reel -- $reelPython $reelMcp --port 8769
-claude mcp add --scope user --transport stdio goni-reel -- $reelPython $reelMcp --port 8769
+codex mcp add goni-reel -- $reelPython $reelMcp
+claude mcp add --scope user --transport stdio goni-reel -- $reelPython $reelMcp
 codex mcp get goni-reel
 claude mcp get goni-reel
 ```
@@ -45,7 +47,7 @@ claude mcp get goni-reel
 
 | 도구 | 동작 |
 |---|---|
-| studio_status | 로컬 서버·FFmpeg 상태 |
+| studio_status | 독립/HTTP 모드·FFmpeg 상태 |
 | list_projects / get_project | 프로젝트 목록/설정/출력 조회 |
 | import_video | 사용자가 지정한 로컬 영상 복사, 작업 ID 반환 |
 | reel_preset | 균등 4컷 계획 반환 |
@@ -53,7 +55,7 @@ claude mcp get goni-reel
 | render_reel | 비동기 렌더 작업 ID 반환 |
 | job_status | queued/running/done/error 및 결과 조회 |
 
-MCP 서버는 stdio로만 실행하고 로컬 127.0.0.1의 지정 포트에만 접속합니다. 공개 인터넷에 서버를 개방할 필요가 없습니다. 실제 MCP 왕복 검사는 `scripts/reel_mcp_smoke.py`로 수행할 수 있습니다.
+MCP는 stdio로 실행합니다. 기본 독립 모드는 렌더러를 직접 호출하며 HTTP 접속이 없습니다. 명시적으로 `--port`를 준 구형 연결만 로컬 127.0.0.1에 접속합니다. 공개 인터넷에 서버를 개방할 필요가 없습니다. 실제 MCP 왕복 검사는 `scripts/reel_mcp_smoke.py`로 수행할 수 있습니다.
 
 ## 편집 JSON과 CLI
 
@@ -103,7 +105,7 @@ MP4, 편집 JSON, 컷별 타임라인과 검수 결과를 전달해줘.
 
 ## 검증과 한계
 
-`python -m unittest discover -s local_studio/tests -v`는 기존 11개와 신규 5개 검사를 실행합니다. 새 검사는 잘못된 구간/숫자 거절, 배속 시간 계산, 재배열 후 실제 픽셀색, 반전 구간, 무음 입력, 세로 출력, 버전 보존을 확인합니다.
+`python -m unittest discover -s local_studio/tests -v`는 총 18개 검사를 실행합니다(기존 11개, 렌더 5개, 독립 작업 상태 2개). 새 검사는 잘못된 구간/숫자 거절, 배속 시간 계산, 재배열 후 실제 픽셀색, 반전 구간, 무음 입력, 세로 출력, 버전 보존을 확인합니다.
 
 실제 제공된 릴스를 로컬에서 7구간으로 재편집해 약 7.69초 1920×1080 H.264/AAC 출력, 전체 디코드, 표본 프레임을 확인했습니다. 이 테스트는 이미 편집된 참고 영상을 입력으로 사용했으므로 원본에 있던 합성 효과가 포함됩니다. **새로 촬영한 독립 작품이나 원작 효과 전체의 재구현이 아닙니다.** 해당 미디어·음원·개인 경로는 공개 저장소에 포함하지 않습니다.
 

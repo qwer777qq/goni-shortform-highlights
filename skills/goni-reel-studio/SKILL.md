@@ -1,16 +1,16 @@
 ---
 name: goni-reel-studio
-description: 고니 장면집의 여러 구간 연결·배속·명암·반전·플래시를 MCP 또는 CLI로 설정하고 가로·세로 테스트 MP4를 출력·검수한다. 참고 영상의 스타일 분석과 실행 가능한 편집 계획을 연결할 때 사용한다.
+description: 장면집 화면·서버 없이 고니 독립 엔진의 여러 구간 연결·배속·명암·반전·플래시를 MCP 또는 CLI로 설정하고 가로·세로 테스트 MP4를 출력·검수한다. 참고 영상의 스타일 분석과 실행 가능한 편집 계획을 연결할 때 사용한다.
 ---
 
 # 고니 릴스 스튜디오
 
-소스와 설치: [goni-shortform-highlights](https://github.com/qwer777qq/goni-shortform-highlights). 설치·UI·CLI·MCP 사용법은 저장소의 `docs/reel-studio.md`를 읽는다. 기존 단일 구간 자막 편집은 기본 편집기에서 유지하고, 여러 구간 효과 편집은 `/reel`에서 수행한다.
+소스와 설치: [goni-shortform-highlights](https://github.com/qwer777qq/goni-shortform-highlights). 설치·UI·CLI·MCP 사용법은 저장소의 `docs/reel-studio.md`를 읽는다. 기본은 장면집 화면·서버 없는 독립 실행이다. `docs/standalone-reel.md`를 먼저 읽는다. UI가 필요할 때만 `/reel`을 사용한다.
 
 ## 실행
 
 1. 참고 영상과 실제 제작 원본을 구분한다. 재생·음성·프레임 중 확인한 범위만 기록한다. 편집 완료된 참고 영상을 재편집하면 기존 효과가 남아 있다는 점을 밝힌다.
-2. `goni-reel` MCP의 `studio_status`로 로컬 서버·FFmpeg를 확인한다. 연결이 없으면 설치 안내의 CLI로 실행하며 MCP로 처리했다고 보고하지 않는다.
+2. `goni-reel` MCP의 `studio_status`로 `mode: standalone`, `server_required: false`와 FFmpeg를 확인한다. 기본 등록에는 `--port`를 넣지 않는다. 연결이 없으면 `python goni_reel.py --input 원본 --plan 설정.json --output 새폴더`로 실행하며 MCP로 처리했다고 보고하지 않는다.
 3. `import_video` 뒤 `job_status`가 `done`인지 확인한다. 반환된 프로젝트 ID를 사용한다. 기존 프로젝트를 의도 없이 덮어쓰지 않는다.
 4. 실제 화면을 보고 장면을 선정한다. `reel_preset`은 균등 4구간 제안이며 맥락·음악 분석이 아니다.
 5. `save_reel`에 계획을 전달한다. 장면 `start/end`는 원본 초, `invert/flash`는 배속 적용 후 각 장면의 로컬 출력 초다. `[start,end)` 반열린 구간이다.
@@ -31,3 +31,5 @@ description: 고니 장면집의 여러 구간 연결·배속·명암·반전·�
 인물 분할/로토스코핑/팔·몸 복제 합성, 진짜 연속 속도 램프, 자동 비트 싱크, 다른 파일의 BGM 혼합, 다중 원본 파일 타임라인, 릴스 모드 자막 합성, 자동 게시. 화면을 보고 원작자의 앱·MCP·플러그인을 확정하지 않는다.
 
 결과에는 문서/코드/MCP 등록/MCP 실제 호출/출력/시각 검수 상태를 분리한다. 원본 영상·계정·비밀값·개인 경로를 공개 저장소에 포함하지 않는다. 테스트 산출물과 게시용 승인본을 구분한다.
+
+독립 MCP의 기본 자료는 사용자 홈 `.goni-reel/projects`다. 진행 중 작업은 프로세스 종료 시 복구되지 않으며 완료 결과는 프로젝트에 남는다. 동일 프로젝트를 다른 에이전트나 UI와 동시에 수정하지 않는다.

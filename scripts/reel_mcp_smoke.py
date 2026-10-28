@@ -1,4 +1,4 @@
-"""Exercise the real stdio MCP protocol against a running local studio."""
+"""Exercise real stdio MCP, standalone by default or legacy HTTP with --port."""
 import argparse
 import asyncio
 import json
@@ -11,13 +11,19 @@ from mcp.client.stdio import stdio_client
 
 async def main():
     p=argparse.ArgumentParser()
-    p.add_argument('--port', type=int, default=8767)
+    p.add_argument('--port', type=int)
+    p.add_argument('--data-dir', type=Path)
+    p.add_argument('--deny-network', action='store_true')
     p.add_argument('--video', type=Path, required=True)
     p.add_argument('--plan', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     args=p.parse_args()
     root=Path(__file__).resolve().parents[1]
-    server=StdioServerParameters(command=sys.executable, args=[str(root/'local_studio/reel_mcp.py'),'--port',str(args.port)])
+    server_args=[str(root/'local_studio/reel_mcp.py')]
+    if args.port is not None: server_args += ['--port', str(args.port)]
+    if args.data_dir: server_args += ['--data-dir', str(args.data_dir.resolve())]
+    if args.deny_network: server_args.insert(0, str(root/'scripts/offline_python.py'))
+    server=StdioServerParameters(command=sys.executable, args=server_args)
     history=[]
     async with stdio_client(server) as (read,write):
         async with ClientSession(read,write) as session:
@@ -38,14 +44,17 @@ async def main():
                     job=await call('job_status',{'job_id':job['id']})
                 if job['status']!='done': raise RuntimeError(job['message'])
                 return job['result']
-            await call('studio_status')
+            status=await call('studio_status')
+            if args.port is None:
+                assert status['mode']=='standalone' and status['server_required'] is False
             project=(await wait(await call('import_video',{'path':str(args.video.resolve())})))['project']
             plan=json.loads(args.plan.read_text(encoding='utf-8-sig'))
             await call('save_reel',{'project_id':project['id'],'plan':plan})
             saved=await call('get_project',{'project_id':project['id']})
             assert len(saved['reel']['clips'])==len(plan['clips'])
             result=await wait(await call('render_reel',{'project_id':project['id']}))
-            report={'protocol':'MCP stdio','tools':names,'calls':history,'project_id':project['id'],'render':result}
+            report={'protocol':'MCP stdio','status':status,'python_network_disabled':args.deny_network,
+                    'tools':names,'calls':history,'project_id':project['id'],'render':result}
             args.output.parent.mkdir(parents=True,exist_ok=True)
             args.output.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
             print(json.dumps({'project_id':project['id'],'render':result},ensure_ascii=False))
