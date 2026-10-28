@@ -27,4 +27,3 @@ $('sourcePreview').onclick=source;
 for(const id of ['ratio','layout','audio','audioStart'])$(id).addEventListener('change',()=>{dirty=true;});
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 action(async()=>{await projects();const id=new URLSearchParams(location.search).get('project');if(id)await load(id);});
-
