@@ -8,6 +8,8 @@
 
 [고니 독립 영상 엔진](docs/standalone-reel.md)은 브라우저·웹 서버 없이 CLI 또는 Codex·Claude MCP로 원본 → 편집 → MP4를 처리합니다. `goni_reel.py`가 한 번에 출력하며, MCP 기본 모드도 직접 실행입니다.
 
+**처음이라면:** [상황별 프롬프트 4가지](prompts/README.md)에서 BAT 만들기, 영상 제작, 자막 영상, 수정 중 하나만 골라 복사하세요.
+
 ## 무엇을 할 수 있나요?
 
 **새 기능: [릴스 다중 장면 편집 + MCP](docs/reel-studio.md)** — 한 원본의 여러 구간 연결, 장면별 배속·확대·명암·반전·플래시, 가로/세로 MP4 출력. 기본 자막 편집기와 별도 화면(`/reel`)으로 제공하며 Codex·Claude Code용 `goni-reel` MCP와 CLI를 연결합니다. [릴스 스킬](skills/goni-reel-studio/SKILL.md).
