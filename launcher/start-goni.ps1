@@ -73,6 +73,31 @@ try {
         Write-Host "원본 저장 완료: $source" -ForegroundColor Green
     }
     if ($DownloadOnly) { Write-Host "가져오기 시험 완료: $source"; return }
+    Write-Host "`n원본 정리 선택" -ForegroundColor Cyan
+    $eraseText = Read-Host '영상 속 글자 자동 지우기? 1=예, Enter=아니요'
+    if ($eraseText -and $eraseText -ne '1') { Fail '글자 지우기는 1 또는 Enter를 입력하세요.' }
+    Write-Host '소리: 1=원본 유지  2=전체 무음  3=목소리 지우기  4=배경음악 지우기'
+    $audioChoice = Read-Host '선택 (Enter=원본 유지)'
+    $audioModes = @{ '1'='keep'; '2'='mute'; '3'='remove_voice'; '4'='voice_only'; ''='keep' }
+    if (-not $audioModes.ContainsKey($audioChoice)) { Fail '소리 선택은 1~4 중 하나입니다.' }
+    $audioMode = $audioModes[$audioChoice]
+    if ($eraseText -eq '1' -or $audioMode -ne 'keep') {
+        $repoRoot = Split-Path -Parent $PSScriptRoot
+        $cleanup = Join-Path $repoRoot 'erase_video.py'
+        $erasePython = Join-Path $env:LOCALAPPDATA 'Goni\erase-env\Scripts\python.exe'
+        $repoPython = Join-Path $repoRoot '.venv-reel\Scripts\python.exe'
+        if (-not (Test-Path -LiteralPath $cleanup) -or -not (Test-Path -LiteralPath $repoPython)) { Fail '고니 영상 정리 엔진을 찾지 못했습니다. 저장소 실행기와 .venv-reel을 확인하세요.' }
+        if (($eraseText -eq '1' -or $audioMode -in @('remove_voice','voice_only')) -and -not (Test-Path -LiteralPath $erasePython)) { Fail '자동 글자·음성 분리 환경이 없습니다. 영상 정리 설치 안내를 확인하세요.' }
+        $env:GONI_ERASE_PYTHON = $erasePython
+        $env:GONI_DEMUCS_PYTHON = $erasePython
+        $cleanDir = Join-Path $job '원본 정리'
+        $cleanArgs = @($cleanup, '--input', $source, '--output', $cleanDir, '--audio', $audioMode)
+        if ($eraseText -eq '1') { $cleanArgs += '--auto-text' }
+        Write-Host '선택한 영상 정리 작업을 실행합니다. 첫 실행은 모델 다운로드로 시간이 더 걸릴 수 있습니다.' -ForegroundColor Cyan
+        & $repoPython @cleanArgs
+        if ($LASTEXITCODE -ne 0) { Fail "영상 정리 실패. 작업 폴더를 확인하세요: $job" }
+        $source = Join-Path $cleanDir 'cleaned.mp4'
+    }
     $requestPath = Join-Path $job '요청.json'
     @{ source=$source; topic=$Topic; length=$Length; ratio=$Ratio; output_dir=$job } |
         ConvertTo-Json | Set-Content -LiteralPath $requestPath -Encoding UTF8

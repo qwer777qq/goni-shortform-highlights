@@ -1,4 +1,5 @@
 import copy
+import array
 import json
 from pathlib import Path
 import shutil
@@ -88,6 +89,18 @@ class Render(unittest.TestCase):
         meta=core.probe(result['path'])
         self.assertEqual((meta['width'],meta['height']),(1080,1920))
         self.assertTrue(meta['has_audio'])  # silence track keeps concatenation deterministic
+
+    def test_mute_replaces_source_audio_with_silence(self):
+        project = core.import_file(self.input)
+        result = reel.render(project['id'], dict(audio='mute', clips=[dict(start=0, end=.5)]))
+        def peak(path):
+            raw = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', str(path), '-t', '0.4',
+                                           '-map', '0:a:0', '-f', 's16le', '-ac', '1', '-ar', '8000', '-'])
+            samples = array.array('h', raw)
+            self.assertTrue(samples)
+            return max(abs(sample) for sample in samples)
+        self.assertGreater(peak(self.input), 100)
+        self.assertLessEqual(peak(result['path']), 1)
 
 
 if __name__=='__main__':

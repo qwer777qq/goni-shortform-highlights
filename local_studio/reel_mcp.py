@@ -2,9 +2,13 @@
 import argparse
 import json
 from pathlib import Path
+import sys
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from mcp.server.fastmcp import FastMCP
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from erase_video import clean_video
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--port', type=int, help='Optional legacy studio HTTP port')
@@ -47,6 +51,18 @@ def studio_status() -> dict:
     if engine:
         return engine.status()
     return request('/api/config')
+
+
+@mcp.tool()
+def clean_source_video(source: str, output_dir: str, region: list[int] | None = None,
+                       audio: str = 'keep', auto_text: bool = False) -> dict:
+    """Clean an owned/authorized file or URL in a NEW folder. Optional region is [x,y,w,h].
+    Audio: keep, mute, remove_voice, voice_only. Region uses spatial interpolation, not AI.
+    auto_text uses OCR and frame-by-frame inpainting, and can remove other text too.
+    Voice separation needs Demucs; OCR needs EasyOCR and OpenCV. May take a long time.
+    Never claims perfect restoration or verified voice quality.
+    """
+    return clean_video(source, output_dir, region, audio, auto_text)
 
 
 @mcp.tool()

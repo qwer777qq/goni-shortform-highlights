@@ -12,6 +12,8 @@
 
 **Windows Claude 실행기:** [BAT 더블클릭 사용법](launcher/사용법.md). Claude Code·FFmpeg·고니 MCP 설치와 로그인 확인 후 영상 경로를 입력하면 Claude 세션이 시작됩니다. 기본 권한 확인을 유지합니다.
 
+**영상 글자·소리 정리:** [초보자 설치 및 사용법](docs/video-cleanup.md). 링크나 파일을 넣고 자동 글자 지우기, 목소리 또는 배경음악 분리, 전체 무음을 선택합니다. 자동 복원과 소리 분리 품질은 영상마다 달라 결과 확인이 필요합니다.
+
 ## 무엇을 할 수 있나요?
 
 **새 기능: [릴스 다중 장면 편집 + MCP](docs/reel-studio.md)** — 한 원본의 여러 구간 연결, 장면별 배속·확대·명암·반전·플래시, 가로/세로 MP4 출력. 기본 자막 편집기와 별도 화면(`/reel`)으로 제공하며 Codex·Claude Code용 `goni-reel` MCP와 CLI를 연결합니다. [릴스 스킬](skills/goni-reel-studio/SKILL.md).
