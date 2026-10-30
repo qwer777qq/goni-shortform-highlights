@@ -3,7 +3,8 @@
     [string]$Topic,
     [string]$Length = '30~60초',
     [ValidateSet('9:16', '16:9')][string]$Ratio = '9:16',
-    [switch]$CheckOnly
+    [switch]$CheckOnly,
+    [switch]$DownloadOnly
 )
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
@@ -27,14 +28,22 @@ try {
     if ($CheckOnly) { return }
 
     if (-not $VideoPath) {
-        Write-Host '원본 영상의 전체 경로를 입력하세요. 취소하려면 빈칸으로 Enter를 누르세요.'
-        $VideoPath = (Read-Host '영상 경로').Trim().Trim('"')
+        Write-Host '원본 영상 파일 경로 또는 동영상 링크를 입력하세요. 취소하려면 빈칸으로 Enter를 누르세요.'
+        $VideoPath = (Read-Host '영상 파일 또는 링크').Trim().Trim('"')
     }
     if (-not $VideoPath) { Write-Host '작업을 취소했습니다.'; return }
-    $source = (Resolve-Path -LiteralPath $VideoPath -ErrorAction Stop).ProviderPath
-    if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { Fail '영상 파일을 찾을 수 없습니다.' }
-    $allowed = @('.mp4','.mov','.mkv','.webm','.m4v','.avi')
-    if ($allowed -notcontains [IO.Path]::GetExtension($source).ToLowerInvariant()) { Fail '지원하는 영상 파일을 선택하세요: MP4, MOV, MKV, WebM, M4V, AVI' }
+    $isUrl = $VideoPath -match '^https?://'
+    if (-not $isUrl) {
+        $source = (Resolve-Path -LiteralPath $VideoPath -ErrorAction Stop).ProviderPath
+        if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { Fail '영상 파일을 찾을 수 없습니다.' }
+        $allowed = @('.mp4','.mov','.mkv','.webm','.m4v','.avi')
+        if ($allowed -notcontains [IO.Path]::GetExtension($source).ToLowerInvariant()) { Fail '지원하는 영상 파일을 선택하세요: MP4, MOV, MKV, WebM, M4V, AVI' }
+    } else {
+        $uri = [Uri]$VideoPath
+        if (-not $uri.Host -or $uri.UserInfo) { Fail '로그인 정보가 포함되지 않은 올바른 동영상 링크를 입력하세요.' }
+        $downloader = Get-Command yt-dlp -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+        if (-not $downloader) { Fail '링크를 가져오려면 yt-dlp가 필요합니다. 공식 설치 안내에 따라 설치한 뒤 다시 실행하세요.' }
+    }
     if (-not $Topic) { $Topic = Read-Host '주제 또는 원하는 내용 (비워두면 원본에 맞게)' }
     $lengthInput = Read-Host "목표 길이 (기본 $Length)"
     if ($lengthInput) { $Length = $lengthInput }
@@ -46,6 +55,24 @@ try {
     $desktop = [Environment]::GetFolderPath('Desktop')
     $job = Join-Path $desktop ('고니 쇼츠 작업 ' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [Guid]::NewGuid().ToString('N').Substring(0,6))
     New-Item -ItemType Directory -Path $job | Out-Null
+    if ($isUrl) {
+        Write-Host "`n링크에서 영상 한 개를 가져옵니다. 재생목록 전체는 받지 않습니다." -ForegroundColor Cyan
+        $downloadDir = Join-Path $job '원본'
+        New-Item -ItemType Directory -Path $downloadDir | Out-Null
+        $pathFile = Join-Path $downloadDir 'downloaded-path.txt'
+        $template = Join-Path $downloadDir 'source.%(ext)s'
+        & $downloader.Source --ignore-config --no-playlist --no-overwrites --newline --merge-output-format mp4 -o $template --print-to-file 'after_move:filepath' $pathFile -- $VideoPath
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $pathFile -PathType Leaf)) {
+            Fail "링크 가져오기에 실패했습니다. 로그인·비공개·서비스 제한 또는 네트워크를 확인하거나 원본 파일을 입력하세요. 작업 폴더: $job"
+        }
+        $source = (Get-Content -LiteralPath $pathFile -Encoding UTF8 | Select-Object -Last 1).Trim()
+        if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { Fail "다운로드된 파일을 확인할 수 없습니다. 작업 폴더: $job" }
+        $source = (Resolve-Path -LiteralPath $source).ProviderPath
+        $videoStream = & ffprobe -v error -select_streams v:0 -show_entries stream=codec_type -of csv=p=0 $source
+        if ($LASTEXITCODE -ne 0 -or $videoStream -notcontains 'video') { Fail "다운로드한 파일이 재생 가능한 영상이 아닙니다. 작업 폴더: $job" }
+        Write-Host "원본 저장 완료: $source" -ForegroundColor Green
+    }
+    if ($DownloadOnly) { Write-Host "가져오기 시험 완료: $source"; return }
     $requestPath = Join-Path $job '요청.json'
     @{ source=$source; topic=$Topic; length=$Length; ratio=$Ratio; output_dir=$job } |
         ConvertTo-Json | Set-Content -LiteralPath $requestPath -Encoding UTF8
@@ -71,4 +98,5 @@ goni-reel-studio와 goni-shortform-highlights 지침을 적용해라.
 } catch {
     Write-Host ("오류: " + $_.Exception.Message) -ForegroundColor Red
     $global:LASTEXITCODE = 1
+    if ($DownloadOnly) { exit 1 }
 }
